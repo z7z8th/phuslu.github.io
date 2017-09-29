@@ -399,7 +399,6 @@ $netarp = get_netarp();
 <title><?php echo $_SERVER['SERVER_NAME']; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="PHP探针中文极速版 - https://phuslu.github.io ">
 <style>
 body {
 	margin: 0;
