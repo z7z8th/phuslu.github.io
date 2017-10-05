@@ -83,27 +83,6 @@ def cx_ddns(api_key, api_secret, domain, ip=''):
     logging.info('cx_ddns domain=%r to ip=%r result: %s', domain, ip, resp.read())
 
 
-def cx_update(api_key, api_secret, domain_id, host, ip):
-    api_url = 'https://www.cloudxns.net/api2/record/{}'.format(domain_id)
-    date = email.utils.formatdate()
-    api_hmac = hashlib.md5(''.join((api_key, api_url, date, api_secret)).encode()).hexdigest()
-    headers = {'API-KEY': api_key, 'API-REQUEST-DATE': date, 'API-HMAC': api_hmac, 'API-FORMAT': 'json'}
-    resp = urlopen(Request(api_url, data=None, headers=headers), timeout=5)
-    data = json.loads(resp.read().decode())['data']
-    record_id = int(next(x['record_id'] for x in data if x['type']==('AAAA' if ':' in ip else 'A') and x['host']==host))
-    logging.info('cx_update query domain_id=%r host=%r to record_id: %r', domain_id, host, record_id)
-    api_url = 'https://www.cloudxns.net/api2/record/{}'.format(record_id)
-    data = json.dumps({'domain_id': domain_id, 'host': host, 'value': ip})
-    date = email.utils.formatdate()
-    api_hmac = hashlib.md5(''.join((api_key, api_url, data, date, api_secret)).encode()).hexdigest()
-    headers = {'API-KEY': api_key, 'API-REQUEST-DATE': date, 'API-HMAC': api_hmac, 'API-FORMAT': 'json'}
-    request = Request(api_url, data=data.encode(), headers=headers)
-    request.get_method = lambda: 'PUT'
-    resp = urlopen(request, timeout=5)
-    logging.info('cx_update update domain_id=%r host=%r ip=%r result: %r', domain_id, host, ip, resp.read())
-    return
-
-
 def cf_ddns(auth_email, auth_key, zone, record_name, ip=''):
     lip = socket.gethostbyname(record_name)
     ip = getip()
@@ -132,6 +111,34 @@ def cf_ddns(auth_email, auth_key, zone, record_name, ip=''):
     logging.info('cf_ddns updating record_name=%r to ip=%r', record_name, ip)
     resp = urlopen(req, timeout=5)
     logging.info('cf_ddns record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
+
+
+def gandi_ddns(api_key, zone, record_name, ip=''):
+    lip = socket.gethostbyname(record_name)
+    ip = getip()
+    if lip == ip:
+        logging.info('remote ip and local ip is same to %s, exit.', lip)
+        return
+    headers = {'X-Api-Key': api_key, 'Content-Type': 'application/json'}
+    if '.' not in zone:
+        zone_name = zone
+        zone_id = zone
+    else:
+        zone_name = zone
+        api_url = 'https://dns.api.gandi.net/api/v5/zones'
+        resp = urlopen(Request(api_url, headers=headers), timeout=5)
+        zone_id = next(x['uuid'] for x in json.loads(resp.read().decode()) if x['name'] == zone_name)
+    if record_name.endswith(zone_name):
+        record_name = record_name[:-len(zone_name)].strip('.')
+    if record_name == '':
+        record_name = '@'
+    api_url = 'https://dns.api.gandi.net/api/v5/zones/%s/records/%s/A' % (zone_id, record_name)
+    data = json.dumps({'rrset_ttl': 300, 'rrset_values': [ip]})
+    req = Request(api_url, data=data.encode(), headers=headers)
+    req.get_method = lambda: 'PUT'
+    logging.info('gandi_ddns updating record_name=%r to ip=%r', record_name, ip)
+    resp = urlopen(req, timeout=5)
+    logging.info('gandi_ddns record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
 
 
 def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
