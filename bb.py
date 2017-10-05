@@ -68,7 +68,7 @@ def ipaddr(iface=''):
             return addr.split('/')[0]
 
 
-def cx_ddns(api_key, api_secret, domain, ip=''):
+def ddns_cx(api_key, api_secret, domain, ip=''):
     lip = socket.gethostbyname(domain)
     rip = getip()
     if lip == rip:
@@ -80,10 +80,10 @@ def cx_ddns(api_key, api_secret, domain, ip=''):
     api_hmac = hashlib.md5(''.join((api_key, api_url, data, date, api_secret)).encode()).hexdigest()
     headers = {'API-KEY': api_key, 'API-REQUEST-DATE': date, 'API-HMAC': api_hmac, 'API-FORMAT': 'json'}
     resp = urlopen(Request(api_url, data=data.encode(), headers=headers), timeout=5)
-    logging.info('cx_ddns domain=%r to ip=%r result: %s', domain, ip, resp.read())
+    logging.info('ddns_cx domain=%r to ip=%r result: %s', domain, ip, resp.read())
 
 
-def cf_ddns(auth_email, auth_key, zone, record_name, ip=''):
+def ddns_cf(auth_email, auth_key, zone, record_name, ip=''):
     lip = socket.gethostbyname(record_name)
     ip = getip()
     if lip == ip:
@@ -108,12 +108,12 @@ def cf_ddns(auth_email, auth_key, zone, record_name, ip=''):
     data = json.dumps({'id': zone_id, 'type': 'A', 'ttl': 300, 'proxied': False, 'name': record_name, 'content': ip})
     req = Request(api_url, data=data.encode(), headers=headers)
     req.get_method = lambda: 'PUT'
-    logging.info('cf_ddns updating record_name=%r to ip=%r', record_name, ip)
+    logging.info('ddns_cf updating record_name=%r to ip=%r', record_name, ip)
     resp = urlopen(req, timeout=5)
-    logging.info('cf_ddns record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
+    logging.info('ddns_cf record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
 
 
-def gandi_ddns(api_key, zone, record_name, ip=''):
+def ddns_gandi(api_key, zone, record_name, ip=''):
     lip = socket.gethostbyname(record_name)
     ip = getip()
     if lip == ip:
@@ -136,9 +136,9 @@ def gandi_ddns(api_key, zone, record_name, ip=''):
     data = json.dumps({'rrset_ttl': 300, 'rrset_values': [ip]})
     req = Request(api_url, data=data.encode(), headers=headers)
     req.get_method = lambda: 'PUT'
-    logging.info('gandi_ddns updating record_name=%r to ip=%r', record_name, ip)
+    logging.info('ddns_gandi updating record_name=%r to ip=%r', record_name, ip)
     resp = urlopen(req, timeout=5)
-    logging.info('gandi_ddns record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
+    logging.info('ddns_gandi record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
 
 
 def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
@@ -234,39 +234,6 @@ def tcptop(pid=None, no_port=False, interval='1'):
         if rx_kb == 0 or tx_kb == 0:
             continue
         print("%-6s %-12.12s %-21s %-21s %6d %6d" % (pid, comm, laddr, raddr, rx_kb, tx_kb))
-
-
-def reboot_r6220(ip, password):
-    request = Request('http://%s/setup.cgi?todo=debug' % ip)
-    request.add_header('Authorization', 'Basic %s' % base64.b64encode(('admin:%s' % password).encode()).decode())
-    for _ in xrange(3):
-        try:
-            resp = urlopen(request, timeout=2)
-            logging.info('Enable %s debug return: %s', ip, resp.read())
-            break
-        except Exception as e:
-            logging.error('Enable %s debug return: %s', ip, e)
-            time.sleep(1)
-    else:
-        return
-    for _ in xrange(3):
-        try:
-            logging.info('Begin telnet %s', ip)
-            t = telnetlib.Telnet(ip, port=23, timeout=10)
-            break
-        except Exception as e:
-            logging.error('telney %s return: %s', ip, e)
-            time.sleep(1)
-    else:
-        return
-    t.read_until('login:')
-    t.write('root\n')
-    resp = t.read_until('#')
-    logging.info('telnet r6220 return: %s', resp)
-    t.write('reboot\n')
-    resp = t.read_until('#')
-    logging.info('reboot r6220 return: %s', resp)
-    t.close()
 
 
 def __main():
