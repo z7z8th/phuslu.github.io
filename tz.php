@@ -212,39 +212,39 @@ function get_boardinfo()
 
 	if (is_file('/sys/devices/virtual/dmi/id/board_name'))
 	{
-		$info['boardVendor'] = array_shift(file('/sys/devices/virtual/dmi/id/board_vendor'));
-		$info['boardName'] = array_shift(file('/sys/devices/virtual/dmi/id/board_name'));
-		$info['boardVersion'] = array_shift(file('/sys/devices/virtual/dmi/id/board_version'));
+		$info['boardVendor'] = array_shift(file('/sys/devices/virtual/dmi/id/board_vendor', FILE_IGNORE_NEW_LINES));
+		$info['boardName'] = array_shift(file('/sys/devices/virtual/dmi/id/board_name', FILE_IGNORE_NEW_LINES));
+		$info['boardVersion'] = array_shift(file('/sys/devices/virtual/dmi/id/board_version', FILE_IGNORE_NEW_LINES));
 	}
 	else if (is_file('/sys/devices/virtual/android_usb/android0/f_rndis/manufacturer'))
 	{
-		$info['boardVendor'] = array_shift(file('/sys/devices/virtual/android_usb/android0/f_rndis/manufacturer'));
+		$info['boardVendor'] = array_shift(file('/sys/devices/virtual/android_usb/android0/f_rndis/manufacturer', FILE_IGNORE_NEW_LINES));
 		$info['boardName'] = '';
 		$info['boardVersion'] = '';
 	}
 
 	if (is_file('/sys/devices/virtual/dmi/id/bios_vendor'))
 	{
-		$info['BIOSVendor'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_vendor'));
-		$info['BIOSVersion'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_version'));
-		$info['BIOSDate'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_date'));
+		$info['BIOSVendor'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_vendor', FILE_IGNORE_NEW_LINES));
+		$info['BIOSVersion'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_version', FILE_IGNORE_NEW_LINES));
+		$info['BIOSDate'] = array_shift(file('/sys/devices/virtual/dmi/id/bios_date', FILE_IGNORE_NEW_LINES));
 	}
 	else if (is_file('/sys/devices/virtual/android_usb/android0/iProduct'))
 	{
-		$info['BIOSVendor'] = array_shift(file('/sys/devices/virtual/android_usb/android0/iManufacturer'));
-		$info['BIOSVersion'] = array_shift(file('/sys/devices/virtual/android_usb/android0/iProduct'));
+		$info['BIOSVendor'] = array_shift(file('/sys/devices/virtual/android_usb/android0/iManufacturer', FILE_IGNORE_NEW_LINES));
+		$info['BIOSVersion'] = array_shift(file('/sys/devices/virtual/android_usb/android0/iProduct', FILE_IGNORE_NEW_LINES));
 		$info['BIOSDate'] = '';
 	}
 
 	if ($dirs=glob('/sys/class/block/s*'))
 	{
-		$info['diskModel'] = array_shift(file($dirs[0].'/device/model'));
-		$info['diskVendor'] = array_shift(file($dirs[0].'/device/vendor'));
+		$info['diskModel'] = array_shift(file($dirs[0].'/device/model', FILE_IGNORE_NEW_LINES));
+		$info['diskVendor'] = array_shift(file($dirs[0].'/device/vendor', FILE_IGNORE_NEW_LINES));
 	}
 	else if ($dirs=glob('/sys/class/block/mmc*'))
 	{
-		$info['diskModel'] = array_shift(file($dirs[0].'/device/name'));
-		$info['diskVendor'] = array_shift(file($dirs[0].'/device/type'));
+		$info['diskModel'] = trim(array_shift(file($dirs[0].'/device/name')));
+		$info['diskVendor'] = trim(array_shift(file($dirs[0].'/device/type')));
 	}
 
 	return $info;
@@ -402,7 +402,7 @@ $netarp = get_netarp();
 <style>
 body {
 	margin: 0;
-	font-family: Tahoma,"Microsoft Yahei",Arial,Serif;
+	font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 }
 .container {
 	padding-right: 15px;
