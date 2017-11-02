@@ -432,8 +432,9 @@ body {
 	<tr>
 	<th><a href="?method=phpinfo">PHP Info</a></th>
 	<th><a href="/files/">文件下载</a></th>
-	<th><a href="//gateway.<?php echo $_SERVER['HTTP_HOST'];?>">网关管理</a></th>
-	<th><a href="//grafana.<?php echo $_SERVER['HTTP_HOST'];?>/dashboard/db/system-overview?orgId=1">性能监控</a></th>
+	<?php $domain_suffix = (substr_count($_SERVER['HTTP_HOST'], '.') > 1 ? '-' : '.') . $_SERVER['HTTP_HOST']; ?>
+	<th><a href="//gateway<?php echo $domain_suffix;?>">网关管理</a></th>
+	<th><a href="//grafana<?php echo $domain_suffix;?>/dashboard/db/system-overview?orgId=1">性能监控</a></th>
 	</tr>
 </table>
 
@@ -827,3 +828,4 @@ window.onload = function() {
 }
 
 </script>
+
