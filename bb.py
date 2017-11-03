@@ -160,6 +160,28 @@ def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
     logging.info('wol packet sent to MAC=%r', mac)
 
 
+def ddns_he_top(domain, key, ip1, ip2, port=443):
+    timeout = 3
+    ips = [ip1, ip2]
+    timing = []
+    for ip in ips:
+        try:
+            time_start = time.time()
+            socket.create_connection((ip1, port), timeout).close()
+            timing.append(time.time() - time_start)
+        except socket.error as e:
+            logging.warning('connect(%r, %d) error: %s', ip, port, e)
+            timing.append(timeout)
+    mint, maxt = min(timing), max(timing)
+    if maxt < 0.1:
+        logging.info('ddns_he_top domain=%r to ip=%r result: allok', domain, ip)
+        return
+    ip = ips[timing.index(mint)]
+    url = 'https://dyn.dns.he.net/nic/update?hostname=%s&myip=%s&password=%s' % (domain, ip, key)
+    resp = urlopen(url, timeout=5)
+    logging.info('ddns_he_top domain=%r to ip=%r result: %s', domain, ip, resp.read())
+
+
 def capture(url, wait_for_text='', selector='body', viewport_size='800x450', filename='capture.png'):
     """see https://hub.docker.com/r/phuslu/ghost.py/"""
     import ghost
