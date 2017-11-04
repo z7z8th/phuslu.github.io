@@ -160,14 +160,14 @@ def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
     logging.info('wol packet sent to MAC=%r', mac)
 
 
-def ddns_he_top(domain, key, ip1, ip2, port=443):
+def dnselect_he(domain, key, iplist, port=443):
     timeout = 3
-    ips = [ip1, ip2]
+    ips = iplist.split(',')
     timing = []
     for ip in ips:
         try:
             time_start = time.time()
-            socket.create_connection((ip1, port), timeout).close()
+            socket.create_connection((ip, port), timeout).close()
             timing.append(time.time() - time_start)
         except socket.error as e:
             logging.warning('connect(%r, %d) error: %s', ip, port, e)
