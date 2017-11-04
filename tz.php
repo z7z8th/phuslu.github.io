@@ -827,5 +827,16 @@ window.onload = function() {
 	setInterval(getSysinfo, 1000)
 }
 
+var ensure_host = ""
+if (ensure_host != "" && location.host != ensure_host) {
+	var xhr = new XMLHttpRequest()
+	xhr.open('GET', '//' + ensure_host + '/robots.txt', true)
+	xhr.onload = function() {
+		a = document.getElementsByTagName('a')[1]
+		a.href = '//' + ensure_host + a.pathname
+	}
+	xhr.send()
+}
+
 </script>
 
