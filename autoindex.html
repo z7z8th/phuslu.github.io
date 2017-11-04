@@ -3,16 +3,6 @@
 !function(){
 	var show_readme_md = true
 	var max_name_length = 50
-	var ensure_host = ""
-
-	if (ensure_host != "" && location.host != ensure_host) {
-		var xhr = new XMLHttpRequest()
-		xhr.open('GET', '//' + ensure_host + '/favicon.ico', true)
-		xhr.onload = function() {
-			location = '//' + ensure_host + location.pathname
-		}
-		xhr.send()
-	}
 
 	var cdom = {
 		element: null,
@@ -221,4 +211,3 @@ table.table-hover > tbody > tr:hover > th {
 	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='16' viewBox='0 0 12 16'%3E%3Cpath d='M8.5 1L1 1C0.4 1 0 1.4 0 2L0 14C0 14.6 0.4 15 1 15L11 15C11.6 15 12 14.6 12 14L12 4.5 8.5 1ZM11 14L1 14 1 2 4 2 4 3 5 3 5 2 8 2 11 5 11 14 11 14ZM5 4L5 3 6 3 6 4 5 4 5 4ZM4 4L5 4 5 5 4 5 4 4 4 4ZM5 6L5 5 6 5 6 6 5 6 5 6ZM4 6L5 6 5 7 4 7 4 6 4 6ZM5 8L5 7 6 7 6 8 5 8 5 8ZM4 9.3C3.4 9.6 3 10.3 3 11L3 12 7 12 7 11C7 9.9 6.1 9 5 9L5 8 4 8 4 9.3 4 9.3ZM6 10L6 11 4 11 4 10 6 10 6 10Z' fill='%237D94AE'/%3E%3C/svg%3E");
 }
 </style>
-
