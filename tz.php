@@ -1,5 +1,61 @@
 <?php
 
+function __($message) {
+	$messages = array(
+		'Download' => '文件下载',
+		'Gateway' => '网关管理',
+		'Monitor' => '性能监控',
+		'Server Information' => '服务器参数',
+		'Server Domain' => '服务器域名',
+		'IP Address' => 'IP 地址',
+		'your IP is:' => '你的 IP 地址是：',
+		'Kernel Version:' => '内核版本：',
+		'Server Uname' => '服务器标识',
+		'Server OS' => '服务器操作系统',
+		'Server Engine' => '服务器解译引擎',
+		'Server Language' => '服务器语言',
+		'Server Port' => '服务器端口',
+		'Server Hostname' => '服务器主机名',
+		'Adminisrator Email' => '管理员邮箱',
+		'PHP Prober Path' => '探针路径',
+		'Server Realtime Data' => '服务器实时数据',
+		'Server Time' => '服务器当前时间',
+		'Server Uptime' => '服务器已运行时间',
+		'CPU Model' => 'CPU 型号',
+		'CPU Instruction Set' => 'CPU 指令集',
+		'MotherBoard Model' => '主板型号',
+		'MotherBoard BIOS' => '主板 BIOS',
+		'HardDisk Model' => '硬盘型号',
+		'CPU Usage' => 'CPU 使用状况',
+		'Memory Usage' => '内存使用状况',
+		'Physical Memory' => '物理内存',
+		'Used' => '已用',
+		'Free' => '空闲',
+		'Percent' => '使用率',
+		'Total Space' => '总空间',
+		'Cache Memory' => 'Cache 内存',
+		'Real Memory' => '真实内存',
+		'Disk Usage' => '硬盘使用状况',
+		'Loadavg' => '系统平均负载',
+		'Network Usage' => '网络使用状况',
+		'TX' => '出网:',
+		'RX' => '入网:',
+		'Speed' => '实时:',
+		'Network Neighborhood' => '网络邻居',
+		'Type' => '类型',
+		'Device' => '设备',
+		'Prober' => '探针',
+		'Turbo Version' => '中文极速版',
+		'Back to top' => '返回顶部',
+	);
+
+	if (substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) === 'zh') {
+		print $messages[$message];
+	} else {
+		print $message;
+	}
+}
+
 function human_filesize($bytes) {
 	if ($bytes == 0)
 		return '0 B';
@@ -85,6 +141,8 @@ function get_cpuinfo()
 	@preg_match_all("/(?i)bogomips\s{0,}\:+\s{0,}([\d\.]+)[\r\n]+/", $str, $bogomips);
 	@preg_match_all("/(?i)(flags|Features)\s{0,}\:+\s{0,}(.+)[\r\n]+/", $str, $flags);
 
+	$zh = (substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) === 'zh');
+
 	if (is_array($model[1]))
 	{
 		$info['num'] = sizeof($processor[1]);
@@ -92,9 +150,9 @@ function get_cpuinfo()
 			$x1 = '';
 		else
 			$x1 = ' ×'.$info['num'];
-		$mhz[1][0] = ' | 频率:'.$mhz[1][0];
+		$mhz[1][0] = ' | '. (!$zh ? 'Frequency' : '频率') .':'.$mhz[1][0];
 		if (count($cache[0]) > 0)
-			$cache[1][0] = ' | 二级缓存:'.trim($cache[1][0]);
+			$cache[1][0] = ' | '. (!$zh ? 'L2 Cache:' : '二级缓存：') .''.trim($cache[1][0]);
 		$bogomips[1][0] = ' | Bogomips:'.$bogomips[1][0];
 		$info['model'][] = $model[1][0].$mhz[1][0].$cache[1][0].$bogomips[1][0].$x1;
 		$info['flags'] = $flags[2][0];
@@ -116,6 +174,8 @@ function get_uptime()
 	if (!($str = @file('/proc/uptime')))
 		return false;
 
+	$zh = (substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) === 'zh');
+
 	$uptime = '';
 	$str = explode(' ', implode('', $str));
 	$str = trim($str[0]);
@@ -124,12 +184,15 @@ function get_uptime()
 	$days = floor($hours / 24);
 	$hours = floor($hours - ($days * 24));
 	$min = floor($min - ($days * 60 * 24) - ($hours * 60));
+	$duint = !$zh ? (' day'. ($days > 1 ? 's ':' ')) : '天';
+	$huint = !$zh ? (' hour'. ($hours > 1 ? 's ':' ')) : '小时';
+	$muint = !$zh ? (' minute'. ($min > 1 ? 's ':' ')) : '分钟';
 
 	if ($days !== 0)
-		$uptime = $days.'天';
+		$uptime = $days.$duint;
 	if ($hours !== 0)
-		$uptime .= $hours.'小时';
-	$uptime .= $min.'分钟';
+		$uptime .= $hours.$huint;
+	$uptime .= $min.$muint;
 
 	return $uptime;
 }
@@ -431,83 +494,83 @@ body {
 <table>
 	<tr>
 	<th><a href="?method=phpinfo">PHP Info</a></th>
-	<th><a href="/files/">文件下载</a></th>
+	<th><a href="/files/"><?php __('Download'); ?></a></th>
 	<?php $domain_suffix = (substr_count($_SERVER['HTTP_HOST'], '.') > 1 ? '-' : '.') . $_SERVER['HTTP_HOST']; ?>
-	<th><a href="//gateway<?php echo $domain_suffix;?>">网关管理</a></th>
-	<th><a href="//grafana<?php echo $domain_suffix;?>/dashboard/db/system-overview?orgId=1">性能监控</a></th>
+	<th><a href="//gateway<?php echo $domain_suffix;?>"><?php __('Gateway'); ?></a></th>
+	<th><a href="//grafana<?php echo $domain_suffix;?>/dashboard/db/system-overview?orgId=1"><?php __('Monitor'); ?></a></th>
 	</tr>
 </table>
 
 <table>
 	<tr>
-	<th colspan="4">服务器参数</th>
+	<th colspan="4"><?php __('Server Information'); ?></th>
 	</tr>
 	<tr>
-	<td>服务器域名/IP 地址</td>
-	<td colspan="3"><?php echo $current_user;?> - <?php echo $_SERVER['SERVER_NAME'];?>(<?php echo @gethostbyname($_SERVER['SERVER_NAME']); ?>)&nbsp;&nbsp;你的 IP 地址是：<?php echo $remote_addr;?> <span id="iploc"></span></td>
+	<td><?php __('Server Domain'); ?>/<?php __('IP Address'); ?></td>
+	<td colspan="3"><?php echo $current_user;?> - <?php echo $_SERVER['SERVER_NAME'];?>(<?php echo @gethostbyname($_SERVER['SERVER_NAME']); ?>)&nbsp;&nbsp;<?php __('your IP is:'); ?><?php echo $remote_addr;?> <span id="iploc"></span></td>
 	</tr>
 	<tr>
-	<td>服务器标识</td>
+	<td><?php __('Server Uname'); ?></td>
 	<td colspan="3"><?php echo $uname;?></td>
 	</tr>
 	<tr>
-	<td>服务器操作系统</td>
-	<td><?php echo $distname; ?> &nbsp;内核版本：<?php $os = explode(' ', $uname); echo $os[2]; ?></td>
-	<td>服务器解译引擎</td>
+	<td><?php __('Server OS'); ?></td>
+	<td><?php echo $distname; ?> &nbsp;<?php __('Kernel Version:'); ?><?php $os = explode(' ', $uname); echo $os[2]; ?></td>
+	<td><?php __('Server Engine'); ?></td>
 	<td><?php echo $_SERVER['SERVER_SOFTWARE'];?></td>
 	</tr>
 	<tr>
-	<td>服务器语言</td>
+	<td><?php __('Server Language'); ?></td>
 	<td><?php echo $LC_CTYPE=='C'?'POSIX':$LC_CTYPE;?></td>
-	<td>服务器端口</td>
+	<td><?php __('Server Port'); ?></td>
 	<td><?php echo $_SERVER['SERVER_PORT'];?></td>
 	</tr>
 	<tr>
-	<td>服务器主机名</td>
+	<td><?php __('Server Hostname'); ?></td>
 	<td><?php echo $os[1]; ?></td>
-	<td>管理员邮箱</td>
+	<td><?php __('Adminisrator Email'); ?></td>
 	<td><?php echo $_SERVER['SERVER_ADMIN'];?></td>
 	</tr>
 	<tr>
-	<td>探针路径</td>
+	<td><?php __('PHP Prober Path'); ?></td>
 	<td colspan="3"><?php echo str_replace('\\','/',__FILE__)?str_replace('\\','/',__FILE__):$_SERVER['SCRIPT_FILENAME'];?></td>
 	</tr>
 </table>
 
 <table>
 	<tr>
-	<th colspan="4">服务器实时数据</th>
+	<th colspan="4"><?php __('Server Realtime Data'); ?></th>
 	</tr>
 	<tr>
-	<td>服务器当前时间</td>
+	<td><?php __('Server Time'); ?></td>
 	<td><span id="stime"><?php echo $stime;?></span></td>
-	<td>服务器已运行时间</td>
+	<td><?php __('Server Uptime'); ?></td>
 	<td><span id="uptime"><?php echo $uptime;?></span></td>
 	</tr>
 	<tr>
-	<td>CPU 型号 [<?php echo $cpuinfo['num'];?>核]</td>
+	<td><?php __('CPU Model'); ?> [<?php echo $cpuinfo['num'];?>x]</td>
 	<td colspan="3"><?php echo $cpuinfo['model'];?></td>
 	</tr>
 	<tr>
-	<td>CPU 指令集</td>
+	<td><?php __('CPU Instruction Set'); ?></td>
 	<td colspan="3" style="word-wrap: break-word;width: 64em;"><?php echo $cpuinfo['flags'];?></td>
 	</tr>
 <?php if (isset($boardinfo['boardVendor'])) : ?>
 	<tr>
-	<td>主板型号</td>
+	<td><?php __('MotherBoard Model'); ?></td>
 	<td><?php echo $boardinfo['boardVendor'] . " " . $boardinfo['boardName'] . " " . $boardinfo['boardVersion'];?></td>
-	<td>主板 BIOS</td>
+	<td><?php __('MotherBoard BIOS'); ?></td>
 	<td><?php echo $boardinfo['BIOSVendor'] . " " . $boardinfo['BIOSVersion'] . " " . $boardinfo['BIOSDate'];?></td>
 	</tr>
 <?php endif; ?>
 <?php if (isset($boardinfo['diskModel'])) : ?>
 	<tr>
-	<td>硬盘型号</td>
+	<td><?php __('HardDisk Model'); ?></td>
 	<td colspan="3"><?php echo $boardinfo['diskModel'] . " " . $boardinfo['diskVendor'];?></td>
 	</tr>
 <?php endif; ?>
 	<tr>
-	<td>CPU 使用状况</td>
+	<td><?php __('CPU Usage'); ?></td>
 	<td colspan="3">
 	<span id="stat_user" class="text-info">0.0</span> user,
 	<span id="stat_sys" class="text-info">0.0</span> sys,
@@ -521,78 +584,78 @@ body {
 	</td>
 	</tr>
 	<tr>
-	<td>内存使用状况</td>
+	<td><?php __('Memory Usage'); ?></td>
 	<td colspan="3">
-	物理内存：共 <span id="meminfo_memTotal" class="text-info"><?php echo $meminfo['memTotal'];?> </span>
-	 , 已用 <span id="meminfo_memUsed" class="text-info"><?php echo $meminfo['memUsed'];?></span>
-	, 空闲 <span id="meminfo_memFree" class="text-info"><?php echo $meminfo['memFree'];?></span>
-	, 使用率 <span id="meminfo_memPercent"><?php echo $meminfo['memPercent'];?></span>%
+	<?php __('Physical Memory'); ?> <span id="meminfo_memTotal" class="text-info"><?php echo $meminfo['memTotal'];?> </span>
+	 , <?php __('Used'); ?> <span id="meminfo_memUsed" class="text-info"><?php echo $meminfo['memUsed'];?></span>
+	, <?php __('Free'); ?> <span id="meminfo_memFree" class="text-info"><?php echo $meminfo['memFree'];?></span>
+	, <?php __('Percent'); ?> <span id="meminfo_memPercent"><?php echo $meminfo['memPercent'];?></span>%
 	<div class="progress"><div id="meminfo_barmemPercent" class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $meminfo['memPercent'];?>%" ></div></div>
 <?php if($meminfo['memCached']>0): ?>
-	Cache 化内存为 <span id="meminfo_memCached"><?php echo $meminfo['memCached'];?></span>
-	, 使用率 <span id="meminfo_memCachedPercent"><?php echo $meminfo['memCachedPercent'];?></span>%
-	| Buffers 缓冲为 <span id="meminfo_memBuffers"><?php echo $meminfo['memBuffers'];?></span>
+	<?php __('Cache Memory'); ?> <span id="meminfo_memCached"><?php echo $meminfo['memCached'];?></span>
+	, <?php __('Percent'); ?> <span id="meminfo_memCachedPercent"><?php echo $meminfo['memCachedPercent'];?></span>%
+	| Buffers <span id="meminfo_memBuffers"><?php echo $meminfo['memBuffers'];?></span>
 	<div class="progress"><div id="meminfo_barmemCachedPercent" class="progress-bar progress-bar-info" role="progressbar" style="width:<?php echo $meminfo['memCachedPercent'];?>%" ></div></div>
-	真实内存使用 <span id="meminfo_memRealUsed"><?php echo $meminfo['memRealUsed'];?></span>
-	, 真实内存空闲 <span id="meminfo_memRealFree"><?php echo $meminfo['memRealFree'];?></span>
-	, 使用率 <span id="meminfo_memRealPercent"><?php echo $meminfo['memRealPercent'];?></span>%
+	<?php __('Real Memory'); ?> <span id="meminfo_memRealUsed"><?php echo $meminfo['memRealUsed'];?></span>
+	, <?php __('Real Memory'); ?><?php __('Free'); ?> <span id="meminfo_memRealFree"><?php echo $meminfo['memRealFree'];?></span>
+	, <?php __('Percent'); ?> <span id="meminfo_memRealPercent"><?php echo $meminfo['memRealPercent'];?></span>%
 	<div class="progress"><div id="meminfo_barmemRealPercent" class="progress-bar progress-bar-warning" role="progressbar" style="width:<?php echo $meminfo['memRealPercent'];?>%" ></div></div>
 <?php endif; ?>
 <?php if($meminfo['swapTotal']>0): ?>
-	SWAP 区：共 <span id="meminfo_swapTotal"><?php echo $meminfo['swapTotal'];?></span>
-	, 已使用 <span id="meminfo_swapUsed"><?php echo $meminfo['swapUsed'];?></span>
-	, 空闲 <span id="meminfo_swapFree"><?php echo $meminfo['swapFree'];?></span>
-	, 使用率 <span id="meminfo_swapPercent"><?php echo $meminfo['swapPercent'];?></span>%
+	SWAP：<span id="meminfo_swapTotal"><?php echo $meminfo['swapTotal'];?></span>
+	, <?php __('Used'); ?> <span id="meminfo_swapUsed"><?php echo $meminfo['swapUsed'];?></span>
+	, <?php __('Free'); ?> <span id="meminfo_swapFree"><?php echo $meminfo['swapFree'];?></span>
+	, <?php __('Percent'); ?> <span id="meminfo_swapPercent"><?php echo $meminfo['swapPercent'];?></span>%
 	<div class="progress"><div id="meminfo_barswapPercent" class="progress-bar progress-bar-danger" role="progressbar" style="width:<?php echo $meminfo['swapPercent'];?>%" ></div> </div>
 <?php endif; ?>
 	</td>
 	</tr>
 	<tr>
-	<td>硬盘使用状况</td>
+	<td><?php __('Disk Usage'); ?></td>
 	<td colspan="3">
-	总空间 <?php echo $diskinfo['diskTotal'];?>&nbsp;G，
-	已用 <span id="diskinfo_diskUsed"><?php echo $diskinfo['diskUsed'];?></span>&nbsp;G，
-	空闲 <span id="diskinfo_diskFree"><?php echo $diskinfo['diskFree'];?></span>&nbsp;G，
-	使用率 <span id="diskinfo_diskPercent"><?php echo $diskinfo['diskPercent'];?></span>%
+	<?php __('Total Space'); ?> <?php echo $diskinfo['diskTotal'];?>&nbsp;G，
+	<?php __('Used'); ?> <span id="diskinfo_diskUsed"><?php echo $diskinfo['diskUsed'];?></span>&nbsp;G，
+	<?php __('Free'); ?> <span id="diskinfo_diskFree"><?php echo $diskinfo['diskFree'];?></span>&nbsp;G，
+	<?php __('Percent'); ?> <span id="diskinfo_diskPercent"><?php echo $diskinfo['diskPercent'];?></span>%
 	<div class="progress"><div id="diskinfo_barhdPercent" class="progress-bar progress-bar-black" role="progressbar" style="width:<?php echo $diskinfo['diskPercent'];?>%" ></div> </div>
 	</td>
 	</tr>
 	<tr>
-	<td>系统平均负载</td>
+	<td><?php __('Loadavg'); ?></td>
 	<td colspan="3" class="text-danger"><span id="loadAvg"><?php echo $loadavg;?></span></td>
 	</tr>
 </table>
 
 <table class="table table-striped table-bordered table-hover table-condensed">
-	<tr><th colspan="5">网络使用状况</th></tr>
+	<tr><th colspan="5"><?php __('Network Usage'); ?></th></tr>
 <?php foreach ($netdev as $dev => $info ) : ?>
 	<tr>
 	<td style="width:13%"><?php echo $dev;?> : </td>
-	<td style="width:29%">入网: <span class="text-info" id="<?php printf('netdev_%s_human_rx', $dev);?>"><?php echo $info['human_rx']?></span></td>
-	<td style="width:14%">实时: <span class="text-info" id="<?php printf('netdev_%s_delta_rx', $dev);?>">0B/s</span></td>
-	<td style="width:29%">出网: <span class="text-info" id="<?php printf('netdev_%s_human_tx', $dev);?>"><?php echo $info['human_tx']?></span></td>
-	<td style="width:14%">实时: <span class="text-info" id="<?php printf('netdev_%s_delta_tx', $dev);?>">0B/s</span></td>
+	<td style="width:29%"><?php __('RX'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_rx', $dev);?>"><?php echo $info['human_rx']?></span></td>
+	<td style="width:14%"><?php __('Speed'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_rx', $dev);?>">0B/s</span></td>
+	<td style="width:29%"><?php __('TX'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_tx', $dev);?>"><?php echo $info['human_tx']?></span></td>
+	<td style="width:14%"><?php __('Speed'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_tx', $dev);?>">0B/s</span></td>
 	</tr>
 <?php endforeach; ?>
 </table>
 
 <table class="table table-striped table-bordered table-hover table-condensed">
-	<tr><th colspan="5">网络邻居</th></tr>
+	<tr><th colspan="5"><?php __('Network Neighborhood'); ?></th></tr>
 <?php foreach ($netarp as $ip => $info ) : ?>
 	<tr>
 	<td><?php echo $ip;?> </td>
 	<td>MAC: <span class="text-info"><?php  echo $info['hw_addr'];?></span></td>
-	<td>类型: <span class="text-info"><?php echo $info['hw_type'];?></span></td>
-	<td>接口: <span class="text-info"><?php echo $info['device'];?></span></td>
+	<td><?php __('Type'); ?>: <span class="text-info"><?php echo $info['hw_type'];?></span></td>
+	<td><?php __('Device'); ?>: <span class="text-info"><?php echo $info['device'];?></span></td>
 	</tr>
 <?php endforeach; ?>
 </table>
 
 <table class="table table-striped table-bordered table-hover table-condensed">
 	<tr>
-	<td>PHP探针(<a href="https://phuslu.github.io">中文极速版</a>) v1.0</td>
+	<td>PHP <?php __('Prober'); ?>(<a href="https://phuslu.github.io"><?php __('Turbo Version'); ?></a>) v1.0</td>
 	<td>Processed in <?php printf('%0.4f', microtime(true) - $time_start);?> seconds. <?php echo round(memory_get_usage()/1024/1024, 2).'MB';?> memory usage.</td>
-	<td><a href="javascript:scroll(0,0)">返回顶部</a></td>
+	<td><a href="javascript:scroll(0,0)"><?php __('Back to top'); ?></a></td>
 	</tr>
 </table>
 
@@ -839,4 +902,3 @@ if (ensure_host != "" && location.host != ensure_host) {
 }
 
 </script>
-
