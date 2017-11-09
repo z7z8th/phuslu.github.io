@@ -6,20 +6,20 @@ function __($message) {
 		'Gateway' => '网关管理',
 		'Monitor' => '性能监控',
 		'Server Information' => '服务器参数',
-		'Server Domain' => '服务器域名',
+		'Domain' => '域名',
 		'IP Address' => 'IP 地址',
-		'your IP is:' => '你的 IP 地址是：',
-		'Server Uname' => '服务器标识',
-		'Server OS' => '服务器操作系统',
-		'Server Engine' => '服务器解译引擎',
-		'Server Language' => '服务器语言',
-		'Server Port' => '服务器端口',
-		'Server Hostname' => '服务器主机名',
-		'Adminisrator Email' => '管理员邮箱',
-		'PHP Prober Path' => '探针路径',
+		'your ip is:' => '你的 IP 地址是：',
+		'Uname' => '内核标识',
+		'OS' => '操作系统',
+		'Server Software' => '服务器软件',
+		'Language' => '语言',
+		'Port' => '端口',
+		'Hostname' => '主机名',
+		'WebAdmin Email' => '管理员邮箱',
+		'Prober Path' => '探针路径',
 		'Server Realtime Data' => '服务器实时数据',
-		'Server Time' => '服务器当前时间',
-		'Server Uptime' => '服务器已运行时间',
+		'Time' => '当前时间',
+		'Uptime' => '已运行时间',
 		'CPU Model' => 'CPU 型号',
 		'CPU Instruction Set' => 'CPU 指令集',
 		'MotherBoard Model' => '主板型号',
@@ -37,9 +37,9 @@ function __($message) {
 		'Disk Usage' => '硬盘使用状况',
 		'Loadavg' => '系统平均负载',
 		'Network Usage' => '网络使用状况',
-		'TX' => '出网:',
-		'RX' => '入网:',
-		'Speed' => '实时:',
+		'Tx' => '出网',
+		'Rx' => '入网',
+		'Realtime' => '实时',
 		'Network Neighborhood' => '网络邻居',
 		'Type' => '类型',
 		'Device' => '设备',
@@ -102,11 +102,17 @@ function get_ip_location($ip)
 		curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.55.1");
 		$result = curl_exec($ch);
 		curl_close($ch);
+		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+			$result = '';
+		}
 	}
 	else
 	{
 		$options = array('http'=>array('method'=>"GET", 'header'=>"User-Agent: curl/7.55.1\r\n"));
 		$result = file_get_contents('http://ip.cn/?ip=' . $ip, false, stream_context_create($options));
+		if ($result === false) {
+			$result = '';
+		}
 	}
 
 	$location = trim(substr($result, strrpos($result, '：')+3));
@@ -505,33 +511,33 @@ body {
 	<th colspan="4"><?php __('Server Information'); ?></th>
 	</tr>
 	<tr>
-	<td><?php __('Server Domain'); ?>/<?php __('IP Address'); ?></td>
-	<td colspan="3"><?php echo $current_user;?> - <?php echo $_SERVER['SERVER_NAME'];?>(<?php echo @gethostbyname($_SERVER['SERVER_NAME']); ?>)&nbsp;&nbsp;<?php __('your IP is:'); ?><?php echo $remote_addr;?> <span id="iploc"></span></td>
+	<td><?php __('Domain'); ?>/<?php __('IP Address'); ?></td>
+	<td colspan="3"><?php echo $current_user;?> - <?php echo $_SERVER['SERVER_NAME'];?>(<?php echo @gethostbyname($_SERVER['SERVER_NAME']); ?>)&nbsp;&nbsp;<?php __('your ip is:'); ?><?php echo $remote_addr;?> <span id="iploc"></span></td>
 	</tr>
 	<tr>
-	<td><?php __('Server Uname'); ?></td>
+	<td><?php __('Uname'); ?></td>
 	<td colspan="3"><?php echo $uname;?></td>
 	</tr>
 	<tr>
-	<td><?php __('Server OS'); ?></td>
+	<td><?php __('OS'); ?></td>
 	<td><?php echo $distname; ?></td>
-	<td><?php __('Server Engine'); ?></td>
+	<td><?php __('Server Software'); ?></td>
 	<td><?php echo $_SERVER['SERVER_SOFTWARE'];?></td>
 	</tr>
 	<tr>
-	<td><?php __('Server Language'); ?></td>
+	<td><?php __('Language'); ?></td>
 	<td><?php echo $LC_CTYPE=='C'?'POSIX':$LC_CTYPE;?></td>
-	<td><?php __('Server Port'); ?></td>
+	<td><?php __('Port'); ?></td>
 	<td><?php echo $_SERVER['SERVER_PORT'];?></td>
 	</tr>
 	<tr>
-	<td><?php __('Server Hostname'); ?></td>
+	<td><?php __('Hostname'); ?></td>
 	<td><?php $os = explode(' ', $uname); echo $os[1]; ?></td>
-	<td><?php __('Adminisrator Email'); ?></td>
+	<td><?php __('WebAdmin Email'); ?></td>
 	<td><?php echo $_SERVER['SERVER_ADMIN'];?></td>
 	</tr>
 	<tr>
-	<td><?php __('PHP Prober Path'); ?></td>
+	<td><?php __('Prober Path'); ?></td>
 	<td colspan="3"><?php echo str_replace('\\','/',__FILE__)?str_replace('\\','/',__FILE__):$_SERVER['SCRIPT_FILENAME'];?></td>
 	</tr>
 </table>
@@ -541,9 +547,9 @@ body {
 	<th colspan="4"><?php __('Server Realtime Data'); ?></th>
 	</tr>
 	<tr>
-	<td><?php __('Server Time'); ?></td>
+	<td><?php __('Time'); ?></td>
 	<td><span id="stime"><?php echo $stime;?></span></td>
-	<td><?php __('Server Uptime'); ?></td>
+	<td><?php __('Uptime'); ?></td>
 	<td><span id="uptime"><?php echo $uptime;?></span></td>
 	</tr>
 	<tr>
@@ -630,10 +636,10 @@ body {
 <?php foreach ($netdev as $dev => $info ) : ?>
 	<tr>
 	<td style="width:13%"><?php echo $dev;?> : </td>
-	<td style="width:29%"><?php __('RX'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_rx', $dev);?>"><?php echo $info['human_rx']?></span></td>
-	<td style="width:14%"><?php __('Speed'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_rx', $dev);?>">0B/s</span></td>
-	<td style="width:29%"><?php __('TX'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_tx', $dev);?>"><?php echo $info['human_tx']?></span></td>
-	<td style="width:14%"><?php __('Speed'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_tx', $dev);?>">0B/s</span></td>
+	<td style="width:29%"><?php __('Rx'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_rx', $dev);?>"><?php echo $info['human_rx']?></span></td>
+	<td style="width:14%"><?php __('Realtime'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_rx', $dev);?>">0B/s</span></td>
+	<td style="width:29%"><?php __('Tx'); ?>: <span class="text-info" id="<?php printf('netdev_%s_human_tx', $dev);?>"><?php echo $info['human_tx']?></span></td>
+	<td style="width:14%"><?php __('Realtime'); ?>: <span class="text-info" id="<?php printf('netdev_%s_delta_tx', $dev);?>">0B/s</span></td>
 	</tr>
 <?php endforeach; ?>
 </table>
@@ -901,4 +907,3 @@ if (ensure_host != "" && location.host != ensure_host) {
 }
 
 </script>
-
