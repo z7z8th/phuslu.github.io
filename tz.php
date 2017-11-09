@@ -9,7 +9,6 @@ function __($message) {
 		'Server Domain' => '服务器域名',
 		'IP Address' => 'IP 地址',
 		'your IP is:' => '你的 IP 地址是：',
-		'Kernel Version:' => '内核版本：',
 		'Server Uname' => '服务器标识',
 		'Server OS' => '服务器操作系统',
 		'Server Engine' => '服务器解译引擎',
@@ -515,7 +514,7 @@ body {
 	</tr>
 	<tr>
 	<td><?php __('Server OS'); ?></td>
-	<td><?php echo $distname; ?> &nbsp;<?php __('Kernel Version:'); ?><?php $os = explode(' ', $uname); echo $os[2]; ?></td>
+	<td><?php echo $distname; ?></td>
 	<td><?php __('Server Engine'); ?></td>
 	<td><?php echo $_SERVER['SERVER_SOFTWARE'];?></td>
 	</tr>
@@ -527,7 +526,7 @@ body {
 	</tr>
 	<tr>
 	<td><?php __('Server Hostname'); ?></td>
-	<td><?php echo $os[1]; ?></td>
+	<td><?php $os = explode(' ', $uname); echo $os[1]; ?></td>
 	<td><?php __('Adminisrator Email'); ?></td>
 	<td><?php echo $_SERVER['SERVER_ADMIN'];?></td>
 	</tr>
@@ -902,3 +901,4 @@ if (ensure_host != "" && location.host != ensure_host) {
 }
 
 </script>
+
