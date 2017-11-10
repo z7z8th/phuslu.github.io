@@ -44,7 +44,7 @@ function __($message) {
 		'Type' => '类型',
 		'Device' => '设备',
 		'Prober' => '探针',
-		'Turbo Version' => '中文极速版',
+		'Turbo Version' => '极速版',
 		'Back to top' => '返回顶部',
 	);
 
@@ -885,7 +885,7 @@ function getSysinfo() {
 
 function getIploc() {
 	$.getJSON('?method=iploc', function (data) {
-		$("#iploc").html('('+data+')')
+		$("#iploc").html(data?'('+data+')':'')
 	})
 }
 
