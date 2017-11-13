@@ -48,7 +48,7 @@ if test -n "$BASH_VERSION"; then
         if [ -f ~/.git-prompt.sh ]; then
             #curl -Lf https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh >~/.git-prompt.sh
             source ~/.git-prompt.sh
-            export PS1='\[\e]0;\h:\w\a\]\n\[\e[01;32m\]\u@\h\[\e[00;33m\] \w$(__git_ps1 " (%s)")\n\[\e[1;$((31+3*!$?))m\]\$\[\e[00m\] '
+            export PS1='\[\e]0;\h:\w\a\]\n\[\e[01;32m\]\u@\h\[\e[00;33m\] \w$(__git_ps1 " (%s)") \[\e[00m[\D{%H:%M:%S}]\n\[\e[1;$((31+3*!$?))m\]\$\[\e[00m\] '
             #export PS1='\n\[\e[1;$((31+3*!$?))m\]\$ \[\e[00;36m\]\u\[\e[0m at \[\e[01;32m\]\h\[\e[0m in \[\e[00;33m\]\w\[\e[0m$(__git_ps1 " on git:\[\e[00;36m\]%s\[\e[0m") [\D{%H:%M:%S}]\n\[\e[01;31m\]> \[\e[0m'
         else
             export PS1='\[\e]0;\h:\w\a\]\n\[\e[01;32m\]\u@\h\[\e[00;33m\] \w\n\[\e[1;$((31+3*!$?))m\]\$\[\e[00m\] '
