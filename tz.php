@@ -116,7 +116,7 @@ function get_ip_location($ip)
 	}
 
 	$location = trim(substr($result, strrpos($result, '：')+3));
-	return $location;
+	return substr($location, 0, 100);
 }
 
 function get_cpuinfo()
