@@ -500,9 +500,8 @@ body {
 	<tr>
 	<th><a href="?method=phpinfo">PHP Info</a></th>
 	<th><a href="/files/"><?php __('Download'); ?></a></th>
-	<?php $domain_suffix = (substr_count($_SERVER['HTTP_HOST'], '.') > 1 ? '-' : '.') . $_SERVER['HTTP_HOST']; ?>
-	<th><a href="//gateway<?php echo $domain_suffix;?>"><?php __('Gateway'); ?></a></th>
-	<th><a href="//grafana<?php echo $domain_suffix;?>/dashboard/db/system-overview?orgId=1"><?php __('Monitor'); ?></a></th>
+	<th><a href="//gateway.<?php echo $_SERVER['HTTP_HOST'];?>"><?php __('Gateway'); ?></a></th>
+	<th><a href="//grafana.<?php echo $_SERVER['HTTP_HOST'];?>/dashboard/db/system-overview?orgId=1"><?php __('Monitor'); ?></a></th>
 	</tr>
 </table>
 
