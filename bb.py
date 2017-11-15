@@ -36,7 +36,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def getip():
     urls = [
-        'http://ip.cn',
         'http://whatismyip.akamai.com/',
         'http://checkip.amazonaws.com/',
     ]
@@ -139,6 +138,15 @@ def ddns_gandi(api_key, zone, record_name, ip=''):
     logging.info('ddns_gandi updating record_name=%r to ip=%r', record_name, ip)
     resp = urlopen(req, timeout=5)
     logging.info('ddns_gandi record_name=%r to ip=%r result: %s', record_name, ip, resp.read())
+
+
+def aes_encrypt(key, iv):
+    from Crypto.Cipher import AES
+    text = sys.stdin.read()
+    BS = AES.block_size
+    pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+    # unpad = lambda s : s[0:-ord(s[-1])]
+    print(base64.b64encode(AES.new(key,  AES.MODE_CBC, iv).encrypt(pad(text))).decode())
 
 
 def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
