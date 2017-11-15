@@ -36,6 +36,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def getip():
     urls = [
+        'http://ip.3322.org',
         'http://whatismyip.akamai.com/',
         'http://checkip.amazonaws.com/',
     ]
