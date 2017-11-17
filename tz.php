@@ -97,9 +97,8 @@ function get_ip_location($ip)
 	if (function_exists('curl_init'))
 	{
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "http://ip.cn/?ip=" . $ip);
+		curl_setopt($ch, CURLOPT_URL, 'http://ip-api.com/csv/'.$ip);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.55.1");
 		$result = curl_exec($ch);
 		curl_close($ch);
 		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
@@ -108,15 +107,20 @@ function get_ip_location($ip)
 	}
 	else
 	{
-		$options = array('http'=>array('method'=>"GET", 'header'=>"User-Agent: curl/7.55.1\r\n"));
-		$result = file_get_contents('http://ip.cn/?ip=' . $ip, false, stream_context_create($options));
+		$options = array('http'=>array(
+			'method'=>'GET',
+			'header'=>"User-Agent: curl/7.55.1\r\n"));
+		$result = file_get_contents('http://ip-api.com/csv/'.$ip, false, stream_context_create($options));
 		if ($result === false) {
 			$result = '';
 		}
 	}
 
-	$location = trim(substr($result, strrpos($result, '：')+3));
-	return substr($location, 0, 100);
+	$parts = explode(',', $result);
+	$city = str_replace('"', '', $parts[5]);
+	$isp = str_replace('"', '', $parts[10]);
+
+	return $city . ' - ' . $isp;
 }
 
 function get_cpuinfo()
