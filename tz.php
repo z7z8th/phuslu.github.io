@@ -92,7 +92,33 @@ function get_stat($sleep_seconds)
 	return array_slice(preg_split('/\s+/', trim(array_shift(file('/proc/stat')))), 1);
 }
 
-function get_ip_location($ip)
+function get_ip_location_cn($ip)
+{
+	if (function_exists('curl_init'))
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, "http://cn.ip.cn/?ip=" . $ip);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.55.1");
+		$result = curl_exec($ch);
+		curl_close($ch);
+		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+			$result = '';
+		}
+	}
+	else
+	{
+		$options = array('http'=>array('method'=>"GET", 'header'=>"User-Agent: curl/7.55.1\r\n"));
+		$result = file_get_contents('http://cn.ip.cn/?ip=' . $ip, false, stream_context_create($options));
+		if ($result === false) {
+			$result = '';
+		}
+	}
+	$location = trim(substr($result, strrpos($result, '：')+3));
+	return substr($location, 0, 100);
+}
+
+function get_ip_location_us($ip)
 {
 	if (function_exists('curl_init'))
 	{
@@ -432,7 +458,10 @@ switch ($_GET['method']) {
 		phpinfo();
 		exit;
 	case 'iploc':
-		echo json_encode(get_ip_location(get_remote_addr()));
+		$remote_addr = get_remote_addr();
+		$zh = (substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) === 'zh');
+		$iploc = $zh ? get_ip_location_cn($remote_addr) : get_ip_location_us($remote_addr);
+		echo json_encode($iploc);
 		exit;
 	case 'sysinfo':
 		echo json_encode(array(
