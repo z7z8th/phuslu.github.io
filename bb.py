@@ -170,6 +170,7 @@ def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
 
 
 def dnselect_he(domain, key, iplist, port=443):
+    lip = socket.gethostbyname(domain)
     timeout = 3
     ips = iplist.split(',')
     timing = []
@@ -182,10 +183,15 @@ def dnselect_he(domain, key, iplist, port=443):
             logging.warning('connect(%r, %d) error: %s', ip, port, e)
             timing.append(timeout)
     mint, maxt = min(timing), max(timing)
-    if maxt < 0.1:
-        logging.info('ddns_he_top domain=%r to ip=%r result: allok', domain, ip)
+    if timing[0] < 0.12 and lip != ips[0]:
+        ip = ips[0]
+        logging.info('dnselect_he revert domain=%r to ip=%s', domain, ip)
+    elif mint > 0.12:
+        ip = ips[timing.index(mint)]
+        logging.info('dnselect_he elect domain=%r to ip=%s', domain, ip)
+    else:
+        logging.info('dnselect_he skip domain=%r to ip=%s', domain, lip)
         return
-    ip = ips[timing.index(mint)]
     url = 'https://dyn.dns.he.net/nic/update?hostname=%s&myip=%s&password=%s' % (domain, ip, key)
     resp = urlopen(url, timeout=5)
     logging.info('ddns_he_top domain=%r to ip=%r result: %s', domain, ip, resp.read())
