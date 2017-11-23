@@ -51,7 +51,8 @@
 	div.add('script').attr('src', 'https://cdn.bootcss.com/marked/0.3.6/marked.min.js')
 	div.add('link').attr('rel', 'stylesheet').attr('href', 'https://cdn.bootcss.com/github-markdown-css/2.8.0/github-markdown.min.css')
 
-	title = decodeURIComponent(document.location.pathname.replace(/.*\//, ''))
+	title = decodeURIComponent(document.location.pathname.replace(/.*\//, '').replace(/\.html$/, ''))
+	document.title = '《' + title.replace(/\.md$/, '') + '》'
 	tbody = div.add('table').add('tbody')
 	tbody.add('tr').add('th').text(title).attr('class', 'octicon-book')
 	tbody.add('tr').add('td').add('div').attr('id', 'readme').attr('class', 'markdown-body')
