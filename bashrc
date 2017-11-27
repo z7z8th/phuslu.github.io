@@ -18,18 +18,19 @@ export PS1='\[\e[1;32m\]\u@\h\[\e[0;33m\] \w \[\e[1;$((31+3*!$?))m\]\$\[\e[0m\] 
 #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 case "$SHELL/xterm-256color xterm screen rxvt cygwin" in
-	*/bash/*"$TERM"*)
-	eval $(SHELL=/bin/bash $(type -p dircolors))
-	bind '"\e[B": history-search-forward'
-	bind '"\e[A": history-search-backward'
-	set bell-style none
-	set show-all-if-ambiguous on
-	set completion-ignore-case on
-	shopt -s checkwinsize
-	shopt -s histappend
-	if grep --version >/dev/null 2>&1 ; then alias grep='grep --color'; fi
-	for f in /usr/share/bash-completion/bash_completion ~/.z.sh ~/.git-completion.bash ~/.git-prompt.sh; do if [ -f $f ]; then source $f; fi; done
-	if type -p __git_ps1; then export PS1='\[\e]0;\h:\w\a\]\n\[\e[1;32m\]\u@\h\[\e[0;33m\] \w$(__git_ps1 " (%s)") \[\e[0m[\D{%H:%M:%S}]\n\[\e[1;$((31+3*!$?))m\]\$\[\e[0m\] ' || export PS1='\[\e]0;\h:\w\a\]\n\[\e[1;32m\]\u@\h\[\e[0;33m\] \w\n\[\e[1;$((31+3*!$?))m\]\$\[\e[0m\] '; fi
-	if [ "${HOME%/*}" = "/Users" -a -f ~/.git-prompt.sh ]; then export PS1='\n\[\e[1;$((31+3*!$?))m\]\$ \[\e[0;36m\]\u\[\e[0m at \[\e[0;32m\]\h\[\e[0m in \[\e[1;33m\]\w\[\e[0m$(__git_ps1 " on git:\[\e[0;36m\]%s\[\e[0m") [\D{%H:%M:%S}]\n\[\e[1;31m\]→ \[\e[0m'; fi
-	;;
+    */bash/*"$TERM"*)
+    eval $(SHELL=/bin/bash $(type -p dircolors))
+    bind '"\e[B": history-search-forward'
+    bind '"\e[A": history-search-backward'
+    set bell-style none
+    set show-all-if-ambiguous on
+    set completion-ignore-case on
+    shopt -s checkwinsize
+    shopt -s histappend
+    if grep --version >/dev/null 2>&1 ; then alias grep='grep --color'; fi
+    for f in /usr/share/bash-completion/bash_completion ~/.z.sh ~/.git-completion.bash ~/.git-prompt.sh; do if [ -f $f ]; then source $f; fi; done
+    if type -p __git_ps1; then export PS1='\[\e]0;\h:\w\a\]\n\[\e[1;32m\]\u@\h\[\e[0;33m\] \w$(__git_ps1 " (%s)") \[\e[0m[\D{%H:%M:%S}]\n\[\e[1;$((31+3*!$?))m\]\$\[\e[0m\] ' || export PS1='\[\e]0;\h:\w\a\]\n\[\e[1;32m\]\u@\h\[\e[0;33m\] \w\n\[\e[1;$((31+3*!$?))m\]\$\[\e[0m\] '; fi
+    if [ "${HOME%/*}" = "/Users" -a -f ~/.git-prompt.sh ]; then export PS1='\n\[\e[1;$((31+3*!$?))m\]\$ \[\e[0;36m\]\u\[\e[0m at \[\e[0;32m\]\h\[\e[0m in \[\e[1;33m\]\w\[\e[0m$(__git_ps1 " on git:\[\e[0;36m\]%s\[\e[0m") [\D{%H:%M:%S}]\n\[\e[1;31m\]→ \[\e[0m'; fi
+    ;;
 esac
+
