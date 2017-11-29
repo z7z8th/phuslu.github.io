@@ -87,7 +87,7 @@ function get_remote_addr()
 	}
 }
 
-function get_stat($sleep_seconds)
+function get_stat()
 {
 	return array_slice(preg_split('/\s+/', trim(array_shift(file('/proc/stat')))), 1);
 }
