@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # coding:utf-8
 
 import sys
@@ -282,7 +282,7 @@ def __main():
             setattr(func, '__defaults__', getattr(func, 'func_defaults'))
             setattr(func, '__code__', getattr(func, 'func_code'))
     funcs = sorted(funcs, key=lambda x:x.__name__)
-    params = {f.__name__:list(zip_longest(f.__code__.co_varnames[:f.__code__.co_argcount][::-1], (f.__defaults__ or [])[::-1]))[::-1] for f in funcs}
+    params = dict((f.__name__, list(zip_longest(f.__code__.co_varnames[:f.__code__.co_argcount][::-1], (f.__defaults__ or [])[::-1]))[::-1]) for f in funcs)
     def usage(applet):
         if applet == 'bb.py':
             print('Usage: {0} <applet> [arguments]\n\nExamples:\n{1}\n'.format(applet, '\n'.join('\t{0} {1} {2}'.format(applet, k, ' '.join('--{0} {1}'.format(x.replace('_', '-'), x.upper() if y is None else repr(y)) for (x, y) in v)) for k, v in params.items())))
@@ -299,7 +299,7 @@ def __main():
         return usage()
     options = [x.replace('_','-')+'=' for x in f.__code__.co_varnames[:f.__code__.co_argcount]]
     kwargs, _ =  getopt.gnu_getopt(sys.argv[1:], '', options)
-    kwargs = {k[2:].replace('-', '_'):v for k, v in kwargs}
+    kwargs = dict((k[2:].replace('-', '_'),v) for k, v in kwargs)
     logging.debug('main %s(%s)', f.__name__, kwargs)
     try:
         result = f(**kwargs)
