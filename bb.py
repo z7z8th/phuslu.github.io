@@ -253,8 +253,8 @@ def tcptop(pid=None, no_port=False, interval='1'):
     if no_port:
         new_info = {}
         for (laddr, raddr), (pid, comm, bytes_acked, bytes_received) in info.items():
-            laddr = laddr.rsplit(':', 1)[0]
-            raddr = raddr.rsplit(':', 1)[0]
+            laddr = laddr.rsplit(':', 1)[0].strip('[]').lstrip('::ffff:')
+            raddr = raddr.rsplit(':', 1)[0].strip('[]').lstrip('::ffff:')
             try:
                 parts = new_info[laddr, raddr]
                 parts[-2] += bytes_acked
