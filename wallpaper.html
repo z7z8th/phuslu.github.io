@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<title>首页 - 今日壁纸</title>
+<style>
+body {
+	margin: 0;
+	font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+}
+
+.container {
+	position: relative;
+	margin: 0 auto;
+}
+
+.container img {
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
+}
+
+.container .content {
+	position: absolute;
+	top: 0;
+	background: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+	color: #f1f1f1;
+	width: 100%;
+	padding: 0px;
+}
+</style>
+
+<script type="text/javascript">
+$ = function(s) {
+	return document.querySelector(s)
+};
+
+$.getJSON = function (url, f) {
+	var xhr = null;
+	if (window.XMLHttpRequest) {
+		xhr = new XMLHttpRequest();
+	} else {
+		xhr = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+	}
+	xhr.open('GET', url + '&_=' + new Date().getTime(), true)
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			if (window.JSON) {
+				f(JSON.parse(xhr.responseText))
+			} else {
+				f((new Function('return ' + xhr.responseText))())
+			}
+		}
+	}
+	xhr.send()
+}
+
+$.getJSON('https://query.yahooapis.com/v1/public/yql?q=select+*+from+json+where+url%3D%27https%3A%2F%2Fwww.bing.com%2FHPImageArchive.aspx%3Fformat%3Djs%26idx%3D0%26n%3D1%26mkt%3Dzh-CN%27&format=json', function (data) {
+	$('p').innerText = '【今日壁纸】' + data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
+	$('img').src = 'https://s.cn.bing.com' + data.query.results.json.images.url
+})
+
+$('.content')
+</script>
+
+<div class="container">
+  <div class="content"><p></p></div>
+  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+</div>
+
