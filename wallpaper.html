@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<link rel="dns-prefetch" href="//query.yahooapis.com/" />
+<link rel="dns-prefetch" href="//www.bing.com/" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>首页 - 今日壁纸</title>
 <style>
@@ -36,7 +38,7 @@ body {
 <script type="text/javascript">
 function render(data) {
 	document.getElementsByTagName('p')[0].innerHTML = '【今日壁纸】' + data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
-	document.getElementsByTagName('img')[0].src = 'https://s.cn.bing.com' + data.query.results.json.images.url
+	document.getElementsByTagName('img')[0].src = 'https://www.bing.com' + data.query.results.json.images.url
 }
 </script>
 
