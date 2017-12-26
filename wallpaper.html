@@ -56,8 +56,6 @@ $.getJSON('https://query.yahooapis.com/v1/public/yql?q=select+*+from+json+where+
 	$('p').innerText = '【今日壁纸】' + data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
 	$('img').src = 'https://s.cn.bing.com' + data.query.results.json.images.url
 })
-
-$('.content')
 </script>
 
 <div class="container">
