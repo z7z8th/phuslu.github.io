@@ -70,7 +70,10 @@ def ipaddr(iface=''):
 
 def ddns_cx(api_key, api_secret, domain, ip=''):
     lip = socket.gethostbyname(domain)
-    rip = getip()
+    if ip == '':
+        rip = getip()
+    else:
+        rip = ip
     if lip == rip:
         logging.info('remote ip and local ip is same to %s, exit.', lip)
         return
@@ -85,7 +88,8 @@ def ddns_cx(api_key, api_secret, domain, ip=''):
 
 def ddns_cf(auth_email, auth_key, zone, record_name, ip=''):
     lip = socket.gethostbyname(record_name)
-    ip = getip()
+    if ip == '':
+        ip = getip()
     if lip == ip:
         logging.info('remote ip and local ip is same to %s, exit.', lip)
         return
@@ -115,7 +119,8 @@ def ddns_cf(auth_email, auth_key, zone, record_name, ip=''):
 
 def ddns_gandi(api_key, zone, record_name, ip=''):
     lip = socket.gethostbyname(record_name)
-    ip = getip()
+    if ip == '':
+        ip = getip()
     if lip == ip:
         logging.info('remote ip and local ip is same to %s, exit.', lip)
         return
@@ -169,8 +174,8 @@ def wol(mac='18:66:DA:17:A2:95', broadcast='192.168.2.255'):
     logging.info('wol packet sent to MAC=%r', mac)
 
 
-def dnselect_he(domain, key, iplist, port=443):
-    lip = socket.gethostbyname(domain)
+def dnselect_cf(auth_email, auth_key, zone, record_name, iplist, port=443):
+    lip = socket.gethostbyname(record_name)
     timeout = 3
     ips = iplist.split(',')
     timing = []
@@ -185,16 +190,14 @@ def dnselect_he(domain, key, iplist, port=443):
     mint, maxt = min(timing), max(timing)
     if timing[0] < 0.12 and lip != ips[0]:
         ip = ips[0]
-        logging.info('dnselect_he revert domain=%r to ip=%s', domain, ip)
+        logging.info('dnselect_cf revert record_name=%r to ip=%s', record_name, ip)
     elif mint > 0.12:
         ip = ips[timing.index(mint)]
-        logging.info('dnselect_he elect domain=%r to ip=%s', domain, ip)
+        logging.info('dnselect_cf elect record_name=%r to ip=%s', record_name, ip)
     else:
-        logging.info('dnselect_he skip domain=%r to ip=%s', domain, lip)
+        logging.info('dnselect_cf skip record_name=%r to ip=%s', record_name, lip)
         return
-    url = 'https://dyn.dns.he.net/nic/update?hostname=%s&myip=%s&password=%s' % (domain, ip, key)
-    resp = urlopen(url, timeout=5)
-    logging.info('ddns_he_top domain=%r to ip=%r result: %s', domain, ip, resp.read())
+    ddns_cf(auth_email, auth_key, zone, record_name, ip=ip)
 
 
 def capture(url, wait_for_text='', selector='body', viewport_size='800x450', filename='capture.png'):
