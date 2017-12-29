@@ -4,7 +4,7 @@
 # curl -fo ~/.git-prompt.sh https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 # curl -fo ~/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 # sudo apt install -y bash-completion
-if [ "${HOME%/*}" = "/Users" ]; then alias ls='ls -G' ;else alias ls='ls -ph --color=auto'; fi
+if [ "${HOME%/*}" = "/Users" ]; then alias ls='ls -G' ;else alias ls='ls -p --color=auto'; fi
 alias ll='ls -lF'
 alias rm='rm -i'
 alias mv='mv -i'
