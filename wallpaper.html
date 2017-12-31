@@ -37,7 +37,9 @@ body {
 
 <script type="text/javascript">
 function render(data) {
-	document.getElementsByTagName('p')[0].innerHTML = '【今日壁纸】' + data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
+	title = data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
+	if (!/今日/.test(title)) title = '【今日壁纸】' + title
+	document.getElementsByTagName('p')[0].innerHTML = title
 	document.getElementsByTagName('img')[0].src = 'https://www.bing.com' + data.query.results.json.images.url
 }
 </script>
