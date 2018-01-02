@@ -6,6 +6,7 @@
 <style>
 body {
 	margin: 0;
+	background: #515151;
 	font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 }
 
@@ -23,7 +24,7 @@ body {
 .container .content {
 	position: absolute;
 	top: 0;
-	background: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+	background: rgba(0, 0, 0, 0.5);
 	color: #f1f1f1;
 	width: 100%;
 	padding: 0px;
@@ -31,8 +32,8 @@ body {
 </style>
 
 <div class="container">
-  <div class="content"><p></p></div>
-  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+	<div class="content"><p>【今日壁纸】</p></div>
+	<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
 </div>
 
 <script type="text/javascript">
@@ -45,4 +46,3 @@ function render(data) {
 </script>
 
 <script src="https://query.yahooapis.com/v1/public/yql?q=select+*+from+json+where+url%3D%27https%3A%2F%2Fwww.bing.com%2FHPImageArchive.aspx%3Fformat%3Djs%26idx%3D0%26n%3D1%26mkt%3Dzh-CN%27&format=json&callback=render"></script>
-
