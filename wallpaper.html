@@ -21,7 +21,7 @@ body {
 	width: 100%;
 }
 
-.container .content {
+.container .banner {
 	position: absolute;
 	top: 0;
 	background: rgba(0, 0, 0, 0.5);
@@ -32,8 +32,7 @@ body {
 </style>
 
 <div class="container">
-	<div class="content"><p>【今日壁纸】</p></div>
-	<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+	<div class="banner"><p>【今日壁纸】</p></div>
 </div>
 
 <script type="text/javascript">
@@ -41,8 +40,17 @@ function render(data) {
 	title = data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
 	if (!/今日/.test(title)) title = '【今日壁纸】' + title
 	document.getElementsByTagName('p')[0].innerHTML = title
-	document.getElementsByTagName('img')[0].src = 'https://www.bing.com' + data.query.results.json.images.url
+	img = document.createElement("img")
+	img.src = 'https://www.bing.com' + data.query.results.json.images.url
+	document.getElementsByClassName('container')[0].appendChild(img)
 }
+
+setTimeout(function () {
+	if (document.getElementsByTagName('img').length > 0) return
+	document.getElementsByTagName('p')[0].innerHTML += '．'
+	setTimeout(arguments.callee, 500)
+}, 500)
 </script>
 
 <script src="https://query.yahooapis.com/v1/public/yql?q=select+*+from+json+where+url%3D%27https%3A%2F%2Fwww.bing.com%2FHPImageArchive.aspx%3Fformat%3Djs%26idx%3D0%26n%3D1%26mkt%3Dzh-CN%27&format=json&callback=render"></script>
+
