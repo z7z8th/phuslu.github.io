@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <link rel="dns-prefetch" href="//query.yahooapis.com/" />
+<link rel="dns-prefetch" href="//moe.kiteorg.com/" />
+<link rel="dns-prefetch" href="//moekiteorgcom.b0.upaiyun.com/" />
 <link rel="dns-prefetch" href="//www.bing.com/" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>首页 - 今日壁纸</title>
@@ -32,11 +34,11 @@ body {
 </style>
 
 <div class="container">
-	<div class="banner"><p>【今日壁纸】</p></div>
+	<div class="banner"><p>【加载中】</p></div>
 </div>
 
 <script type="text/javascript">
-function render(data) {
+function bing(data) {
 	title = data.query.results.json.images.copyright.replace(/\s*\(.+?\)$/, '')
 	if (!/今日/.test(title)) title = '【今日壁纸】' + title
 	document.getElementsByTagName('p')[0].innerHTML = title
@@ -45,12 +47,33 @@ function render(data) {
 	document.getElementsByClassName('container')[0].appendChild(img)
 }
 
-setTimeout(function () {
-	if (document.getElementsByTagName('img').length > 0) return
-	document.getElementsByTagName('p')[0].innerHTML += '．'
-	setTimeout(arguments.callee, 500)
-}, 500)
-</script>
+function moe(data) {
+	style = data.query.results.result
+	img = document.createElement("img")
+	img.src = style.match(/https:\/\/[^)]+/)[0].replace('&amp;', '&')
+	document.getElementsByClassName('container')[0].appendChild(img)
+	document.getElementsByTagName('p')[0].innerHTML = '【每日动漫美图】'
+}
 
-<script src="https://query.yahooapis.com/v1/public/yql?q=select+*+from+json+where+url%3D%27https%3A%2F%2Fwww.bing.com%2FHPImageArchive.aspx%3Fformat%3Djs%26idx%3D0%26n%3D1%26mkt%3Dzh-CN%27&format=json&callback=render"></script>
+!function() {
+	callback = "moe"
+
+	if (callback == "moe") {
+		statement = "use 'https://raw.githubusercontent.com/yql/yql-tables/master/data/htmlstring.xml' as htmlstring;"
+		statement += "select * from htmlstring where url='https://moe.kiteorg.com' and xpath='//div[@class=\"header-bg\"]/@style'"
+	} else {
+		statement = "select * from json where url='https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN'"
+	}
+
+	script = document.createElement("script")
+	script.src = "https://query.yahooapis.com/v1/public/yql?q=" + encodeURIComponent(statement) + "&format=json&callback=" + callback
+	document.body.appendChild(script)
+
+	setTimeout(function () {
+		if (document.getElementsByTagName('img').length > 0) return
+		document.getElementsByTagName('p')[0].innerHTML += '．'
+		setTimeout(arguments.callee, 500)
+	}, 500)
+}()
+</script>
 
