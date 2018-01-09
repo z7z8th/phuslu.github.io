@@ -92,7 +92,7 @@ function moe(data) {
 }
 
 !function() {
-	callback = "pixiv"
+	callback = location.search ? location.search.substring(1) : "pixiv"
 
 	switch (callback) {
 	case "pixiv":
@@ -111,6 +111,7 @@ function moe(data) {
 		statement += "select * from htmlstring where url='https://moe.kiteorg.com' and xpath='//div[@class=\"header-bg\"]/@style'"
 		break
 	default:
+		document.getElementsByTagName('p')[0].innerHTML = '【加载失败】'
 		return
 	}
 
