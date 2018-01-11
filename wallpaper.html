@@ -92,14 +92,14 @@ function moe(data) {
 }
 
 !function() {
-	callback = location.search ? location.search.substring(1) : "pixiv"
+	callback = location.search ? location.search.substring(1) : "bing"
 
 	switch (callback) {
-	case "pixiv":
-		statement = "select * from json where url='https://api.pixiv.moe/v1/ranking'"
-		break
 	case "bing":
 		statement = "select * from json where url='https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN'"
+		break
+	case "pixiv":
+		statement = "select * from json where url='https://api.pixiv.moe/v1/ranking'"
 		break
 	case "360":
 		callback = "w360"
